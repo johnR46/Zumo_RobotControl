@@ -84,39 +84,46 @@ void setup() {
 
 
 void loop() {
-
+  digitalWrite(EN_PIN_1, HIGH);
+  digitalWrite(EN_PIN_2, HIGH);
   CH1 =  pulseIn(ch1, HIGH);
   CH2 =  pulseIn(ch2, HIGH);
   CH3 =  pulseIn(ch3, HIGH);
   CH4 =  pulseIn(ch4, HIGH);
-  int  val = map(CH3, MAXCH3, MINCH3, 0, 255);
+  int  val = map(CH3, MAXCH3 + 100, MINCH3 + Error, 0, 255);
+  //  Serial.println(val);
 
   if ((CH2 <= MIDCH2 + Error ) && (CH2 >= MIDCH2 - Error) && (CH1 <= MIDCH1 + Error ) && (CH1 >= MIDCH1 - Error)  ) {
-    motorGo(0, CW, 0);
-    motorGo(1, CW, 0);
+    motorGo(MOTOR_1, CW, 0);
+    motorGo(MOTOR_2, CW, 0);
+    Serial.println("IDLE");
   }
 
   else if ((CH2 >= MIDCH2 + Error)) {
-    //Serial.println("reward");
-    motorGo(0, CW, val);
-    motorGo(1, CW, val);
+    Serial.println("reward");
+    motorGo(MOTOR_1, CW, val);
+    motorGo(MOTOR_2, CW, val);
 
   }  else if ((CH2 <= MIDCH2 - Error)) {
-    motorGo(0, CCW, val);
-    motorGo(1, CCW, val);
-
+    motorGo(MOTOR_1, CCW, val);
+    motorGo(MOTOR_2, CCW, val);
+    Serial.println("Forward");
   }
   else if ((CH1 >= MIDCH1 + Error)) {
-    motorGo(0, CW, val);
-    motorGo(1, CCW, val);
+    motorGo(MOTOR_1, CW, val);
+    motorGo(MOTOR_2, CCW, val);
+    Serial.println("RIGHT");
 
 
   }  else if ((CH1 <= MIDCH1 - Error)) {
-    motorGo(0, CCW, val);
-    motorGo(1, CW, val);
-
+    motorGo(MOTOR_1, CCW, val);
+    motorGo(MOTOR_2, CW, val);
+    Serial.println("LEFT");
   }
 }
+
+
+
 
 void motorGo(uint8_t motor, uint8_t direct, uint8_t pwm)         //Function that controls the variables: motor(0 ou 1), direction (cw ou ccw) e pwm (entra 0 e 255);
 {
@@ -160,4 +167,3 @@ void motorGo(uint8_t motor, uint8_t direct, uint8_t pwm)         //Function that
     analogWrite(PWM_MOTOR_2, pwm);
   }
 }
-
