@@ -75,8 +75,8 @@ void setup() {
 
   pinMode(EN_PIN_1, OUTPUT);
   pinMode(EN_PIN_2, OUTPUT);
-  Serial.begin(9600);              // Initiates the serial to do the monitoring
-  Serial.println("Begin motor control");
+  //.begin(9600);              // Initiates the // to do the monitoring
+  //.println("Begin motor control");
 
 }
 
@@ -91,35 +91,48 @@ void loop() {
   CH3 =  pulseIn(ch3, HIGH);
   CH4 =  pulseIn(ch4, HIGH);
   int  val = map(CH3, MAXCH3 + 100, MINCH3 + Error, 0, 255);
-  //  Serial.println(val);
+  if (val <= 28 ) {
+    val = 0;
+  } else if (val >= 255) {
+    val = 255;
+  }
 
-  if ((CH2 <= MIDCH2 + Error ) && (CH2 >= MIDCH2 - Error) && (CH1 <= MIDCH1 + Error ) && (CH1 >= MIDCH1 - Error)  ) {
+  if ((CH1 && CH2) != 0) {
+
+    if ((CH2 <= MIDCH2 + Error ) && (CH2 >= MIDCH2 - Error) && (CH1 <= MIDCH1 + Error ) && (CH1 >= MIDCH1 - Error)  ) {
+      motorGo(MOTOR_1, CW, 0);
+      motorGo(MOTOR_2, CW, 0);
+      //.println("IDLE");
+    }
+
+    else if ((CH2 >= MIDCH2 + Error)) {
+      //.println("reward");
+      motorGo(MOTOR_1, CCW, val);
+      motorGo(MOTOR_2, CCW, val);
+
+    }  else if ((CH2 <= MIDCH2 - Error)) {
+      motorGo(MOTOR_1, CW, val);
+      motorGo(MOTOR_2, CW, val);
+      //.println("Forward");
+    }
+    else if ((CH1 >= MIDCH1 + Error)) {
+      motorGo(MOTOR_1, CW, val);
+      motorGo(MOTOR_2, CCW, val);
+      //.println("RIGHT");
+
+
+    }  else if ((CH1 <= MIDCH1 - Error)) {
+      motorGo(MOTOR_1, CCW, val);
+      motorGo(MOTOR_2, CW, val);
+      //.println("LEFT");
+    }
+  } else {
+    digitalWrite(EN_PIN_1, 0);
+    digitalWrite(EN_PIN_2, 0);
     motorGo(MOTOR_1, CW, 0);
-    motorGo(MOTOR_2, CW, 0);
-    Serial.println("IDLE");
+    motorGo(MOTOR_2, CCW, 0);
   }
 
-  else if ((CH2 >= MIDCH2 + Error)) {
-    Serial.println("reward");
-    motorGo(MOTOR_1, CW, val);
-    motorGo(MOTOR_2, CW, val);
-
-  }  else if ((CH2 <= MIDCH2 - Error)) {
-    motorGo(MOTOR_1, CCW, val);
-    motorGo(MOTOR_2, CCW, val);
-    Serial.println("Forward");
-  }
-  else if ((CH1 >= MIDCH1 + Error)) {
-    motorGo(MOTOR_1, CW, val);
-    motorGo(MOTOR_2, CCW, val);
-    Serial.println("RIGHT");
-
-
-  }  else if ((CH1 <= MIDCH1 - Error)) {
-    motorGo(MOTOR_1, CCW, val);
-    motorGo(MOTOR_2, CW, val);
-    Serial.println("LEFT");
-  }
 }
 
 
